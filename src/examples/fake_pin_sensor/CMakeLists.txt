@@ -31,9 +31,9 @@
 #
 ############################################################################
 px4_add_module(
-	MODULE examples__px4_simple_app
-	MAIN px4_simple_app
+	MODULE examples__fake_pin_sensor
+	MAIN fake_pin_sensor
 	SRCS
-		px4_simple_app.c
+		fake_pin_sensor.cpp
 	DEPENDS
 	)

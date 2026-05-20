@@ -1,0 +1,5 @@
+menuconfig EXAMPLES_FAKE_PIN_SENSOR
+	bool "fake_pin_sensor"
+	default n
+	---help---
+		Enable support for fake_pin_sensor

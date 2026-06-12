@@ -1,0 +1,5 @@
+menuconfig MODULES_CORE
+	bool "core"
+	default y
+	---help---
+		Enable core module

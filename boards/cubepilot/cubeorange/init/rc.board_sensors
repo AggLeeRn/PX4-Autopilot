@@ -12,3 +12,10 @@ icm20948 -s -b 4 -R 10 -M start
 # SPI1
 ms5611 -s -b 1 start
 icm20649 -s -b 1 start
+
+# External I2C bus 2
+ms4525do start -X -b 2 -a 0x28
+
+# Custom modules
+airspeed_selector start
+core start

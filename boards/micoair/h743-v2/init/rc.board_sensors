@@ -5,11 +5,11 @@
 
 board_adc start
 
-# # Internal SPI bus BMI088 accel/gyro
+# Internal SPI bus BMI088 accel/gyro
 bmi088 -s -b 2 -A -R 6 start
 bmi088 -s -b 2 -G -R 6 start
 
-# # Internal SPI bus BMI270 accel/gyro
+# Internal SPI bus BMI270 accel/gyro
 bmi270 -s -b 3 -R 0 start
 
 # Internal baro
@@ -17,3 +17,33 @@ spl06 -I -a 0x77 start
 
 # External mag
 qmc5883l -I -a 0x0D -R 4 start
+
+# ---------------------------------------------------------------------------
+# Hardware routing — fixni pro tento dron, nastavuje se pri kazdem bootu.
+# Tyhle hodnoty se nemeni, jsou soucasti HW zapojeni.
+# ---------------------------------------------------------------------------
+
+# GPS modul zapojeny na GPS2 port (ttyS1)
+param set GPS_1_CONFIG 202
+param set GPS_2_CONFIG 0
+
+# MTF-01P na TEL2 (ttyS3, 115200 baud) — MAVLink instance 1, onboard mod
+# Senzor musi mit v MicoAssistant nastaven Protocol: MAVLink (PX4)
+param set MAV_1_CONFIG 102
+param set MAV_1_MODE 2
+param set SER_TEL2_BAUD 115200
+
+# ---------------------------------------------------------------------------
+# Jednorazove nastaveni pres QGC (ulozeno v flash, nepsat sem):
+#
+# Airframe:  QGC -> Airframe -> Quadrotor X (Generic)
+# Actuators: QGC -> Actuators -> MAIN 1-4 = BDShot300, Motor 1-4
+# Kalibrace: QGC -> Sensors (accel, gyro, mag, level)
+# Logy:      SDLOG_MODE = -1 (vypnuto), COM_DISARM_PRFLT = -1
+# ---------------------------------------------------------------------------
+
+# ELRS RC receiver (CRSF protokol na RC portu)
+crsf_rc start -d /dev/ttyS5
+
+# Custom modules
+core start

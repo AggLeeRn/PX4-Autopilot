@@ -55,6 +55,8 @@
 
 
 
+#define FLASH_BASED_PARAMS
+
 /* LEDs are driven with push open drain to support Anode to 5V or 3.3V */
 
 #  define GPIO_nLED_RED         /* PE3   */  (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTE|GPIO_PIN3)

@@ -119,3 +119,8 @@ _emscripten_sdk/
 
 # Claude Code local settings
 .claude/settings.local.json
+
+
+/serial_comm/*.jsonl
+/serial_comm/*.csv
+/serial_comm/logs/*.BIN

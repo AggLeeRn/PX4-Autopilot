@@ -164,6 +164,15 @@ __EXPORT int board_app_initialize(uintptr_t arg)
 
 	px4_platform_init();
 
+#ifdef CONFIG_WK2132_UART
+	/* DFRobot DFR0627 (WK2132) - viz src/wk2132.c. Az tady je I2C sbernice
+	 * pripravena, ale jeste pred rcS skriptem, ktery by uz mohl chtit
+	 * /dev/ttyWK1 / /dev/ttyWK2 pouzivat. */
+	if (board_wk2132_initialize() != OK) {
+		syslog(LOG_ERR, "[boot] WK2132 bringup selhal\n");
+	}
+#endif /* CONFIG_WK2132_UART */
+
 	stm32_spiinitialize();
 
 	/* configure the DMA allocator */

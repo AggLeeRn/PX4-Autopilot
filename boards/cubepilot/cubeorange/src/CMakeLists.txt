@@ -51,6 +51,7 @@ else()
 		spi.cpp
 		timer_config.cpp
 		usb.c
+		wk2132.c
 	)
 
 	target_link_libraries(drivers_board

@@ -124,3 +124,5 @@ _emscripten_sdk/
 /serial_comm/*.jsonl
 /serial_comm/*.csv
 /serial_comm/logs/*.BIN
+
+.env

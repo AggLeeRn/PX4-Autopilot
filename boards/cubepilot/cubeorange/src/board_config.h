@@ -187,6 +187,7 @@ __BEGIN_DECLS
 
 extern void stm32_spiinitialize(void);
 extern void board_peripheral_reset(int ms);
+extern int board_wk2132_initialize(void);
 
 #include <px4_platform_common/board_common.h>
 #endif /* __ASSEMBLY__ */

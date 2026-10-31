@@ -1,0 +1,17 @@
+menuconfig SYSTEMCMDS_WK2132
+	bool "wk2132"
+	default n
+	---help---
+		Enable support for the wk2132 command, which prints the state of
+		each WK2132 I2C-to-UART channel (chip registers plus the driver's
+		cumulative byte and error counters).
+
+		Requires the NuttX-side driver, CONFIG_WK2132_UART, to be enabled
+		in the board's defconfig - without it the command does not link.
+
+menuconfig USER_WK2132
+	bool "wk2132 running as userspace module"
+	default y
+	depends on BOARD_PROTECTED && SYSTEMCMDS_WK2132
+	---help---
+		Put wk2132 in userspace memory

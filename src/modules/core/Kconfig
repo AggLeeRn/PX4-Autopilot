@@ -1,5 +1,11 @@
 menuconfig MODULES_CORE
 	bool "core"
-	default y
+	default n
 	---help---
-		Enable core module
+		Enable core module.
+
+		Diagnostic module that subscribes to a handful of uORB topics and
+		prints a status block once a second. Off by default: with
+		"default y" it was silently compiled into every board, and its
+		once-a-second output drowns out anything else on the console.
+		Boards that want it enable it explicitly in their .px4board.

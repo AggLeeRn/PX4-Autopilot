@@ -35,10 +35,9 @@
  * @file wk2132.c
  *
  * Bring-up pro DFRobot Gravity DFR0627 (I2C to Dual UART, cip WK2132) na
- * Cube Orange. NAVRH/DRAFT - nebylo overeno na realnem hardwaru, viz
- * caveaty v include/nuttx/serial/wk2132.h a drivers/serial/wk2132.c.
+ * Cube Orange. Overeno na realnem kusu.
  *
- * Predpoklady k overeni/upraveni podle skutecneho zapojeni:
+ * Konkretni hodnoty nize plati pro tohle zapojeni; pri jinem je upravit:
  *   - Modul je na I2C2 (viz src/i2c.cpp: initI2CBusExternal(2)) - zmen
  *     WK2132_I2C_BUS, pokud je jinde.
  *   - DIP prepinace IA1/IA0 na modulu: podle fyzicke kontroly oba na "1"
@@ -63,7 +62,27 @@
 #ifdef CONFIG_WK2132_UART
 
 #define WK2132_I2C_BUS          2         /* I2C2 (externi) - viz src/i2c.cpp */
-#define WK2132_I2C_FREQUENCY    400000
+
+/* 100 kHz, NE 400 kHz - overeno mereni na tomhle konkretnim zapojeni.
+ *
+ * Cip sam podle datasheetu zvlada az 1 MHz a 400 kHz uz tu jednou zkousene
+ * bylo, s odduvodnenim, ze puvodni nestabilita na 400 kHz byla jen
+ * dusledkem vypnutych hodin sub-UARTu. Nebyla: po prechodu na 400 kHz se
+ * GENA prestalo dat zapsat (cetlo se porad 0xb0 misto 0xb3) a s vypnutymi
+ * hodinami pak cely kanalovy blok vracel nuly - tedy presne ten stav,
+ * kvuli kteremu se ta zamena pricin puvodne udelala. Na 100 kHz drzi
+ * zapisy spolehlive (GENA=0xb3, SCR=0x03, FCR=0x0c) a prenos funguje.
+ *
+ * Limit tedy nedela cip, ale zapojeni - delka kabelu a pull-upy na modulu.
+ * Kdyz to budes chtit zkusit znovu, kontrola je jednoducha: po startu
+ * "wk2132" musi GENA cist 0xb3, ne 0xb0.
+ *
+ * Cena za 100 kHz: jedno cteni registru stoji ~400 us misto ~100 us, takze
+ * pri CONFIG_WK2132_POLL_MS=1 zabere samotne pollovani necinneho kanalu
+ * kolem 40 % sbernice. Sbernici sdili s ms4525do (viz rc.board_sensors),
+ * coz se zatim vejde, ale je to duvod nedavat poll interval jeste niz. */
+
+#define WK2132_I2C_FREQUENCY    100000
 
 /* DIP prepinace na modulu: IA1=1, IA0=1 (fyzicky zkontrolovano na desce).
  * addr_base = (IA1<<6)|(IA0<<5) = (1<<6)|(1<<5) = 0x60.
@@ -107,6 +126,21 @@ int board_wk2132_initialize(void)
 	lower.i2c_frequency = WK2132_I2C_FREQUENCY;
 	lower.xtal_freq     = WK2132_FOSC_DFR0627_HZ;
 	lower.reset         = NULL; /* DFR0627 nevyvadi externi reset pin */
+
+#ifdef CONFIG_I2C_DRIVER
+	/* Zaregistruj /dev/i2c2, aby sel z NSH pouzit nastroj "i2c" na prime
+	 * cteni/zapis registru cipu (ladeni) - PX4 sam znakovy I2C driver
+	 * neregistruje, ma vlastni abstrakci, takze bez tohohle "i2c -b 2"
+	 * skonci na "argument invalid". */
+
+	ret = i2c_register(i2c, WK2132_I2C_BUS);
+
+	if (ret < 0) {
+		syslog(LOG_ERR, "[boot] WK2132: registrace /dev/i2c%d selhala: %d\n",
+		       WK2132_I2C_BUS, ret);
+	}
+
+#endif
 
 	chip = wk2132_instantiate(&lower);
 

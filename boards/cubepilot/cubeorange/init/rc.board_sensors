@@ -18,4 +18,11 @@ ms4525do start -X -b 2 -a 0x28
 
 # Custom modules
 airspeed_selector start
-core start
+
+# core start
+#
+# Vypnuto: modul kazdou sekundu vytiskne blok stavovych radku, coz na
+# konzoli prehlusi vsechno ostatni (vypisy ostatnich prikazu odroluji
+# driv, nez je stihnes precist). Zaroven uz neni ani v buildu - viz
+# "default n" v src/modules/core/Kconfig. Kdyz ho budes chtit zpatky,
+# zapni tam CONFIG_MODULES_CORE=y v .px4board a odkomentuj tenhle radek.
